@@ -17,6 +17,8 @@ if (typeof moment === "undefined" && typeof require === 'function') {
         minutes: 'minutes',
         second: 'second',
         seconds: 'seconds',
+        millisecond: 'millisecond',
+        milliseconds: 'milliseconds',
         delimiter: ' '
     };
 
@@ -24,7 +26,7 @@ if (typeof moment === "undefined" && typeof require === 'function') {
         return num + ' ' + STRINGS[word + (num === 1 ? '' : 's')];
     }
 
-    function buildStringFromValues(yDiff, mDiff, dDiff, hourDiff, minDiff, secDiff){
+    function buildStringFromValues(yDiff, mDiff, dDiff, hourDiff, minDiff, secDiff, milDiff){
         var result = [];
 
         if (yDiff) {
@@ -44,6 +46,9 @@ if (typeof moment === "undefined" && typeof require === 'function') {
         }
         if (secDiff) {
             result.push(pluralize(secDiff, 'second'));
+        }
+        if (milDiff) {
+            result.push(pluralize(milDiff, 'millisecond'));
         }
 
         return result.join(STRINGS.delimiter);
@@ -76,7 +81,12 @@ if (typeof moment === "undefined" && typeof require === 'function') {
         var hourDiff = m2.hour() - m1.hour();
         var minDiff = m2.minute() - m1.minute();
         var secDiff = m2.second() - m1.second();
+        var milDiff = m2.millisecond() - m1.millisecond();
 
+        if (milDiff < 0) {
+            milDiff = 1000 + milDiff;
+            secDiff--;
+        }
         if (secDiff < 0) {
             secDiff = 60 + secDiff;
             minDiff--;
@@ -111,10 +121,11 @@ if (typeof moment === "undefined" && typeof require === 'function') {
                 "hours"   : hourDiff,
                 "minutes" : minDiff,
                 "seconds" : secDiff,
+                "milliseconds" : milDiff,
                 "firstDateWasLater" : firstDateWasLater
             };
         } else {
-            return buildStringFromValues(yDiff, mDiff, dDiff, hourDiff, minDiff, secDiff);
+            return buildStringFromValues(yDiff, mDiff, dDiff, hourDiff, minDiff, secDiff, milDiff);
         }
 
 
